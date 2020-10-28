@@ -34,8 +34,7 @@ class MenuItems:
 
 
 class Banking:
-    iin_number = 400000
-    checksum_number = 9
+    iin_number = "400000"
     main_menu_dict = {"1": "Create an account", "2": "Log into account", "0": "Exit"}
     account_menu_dict = {"1": "Balance", "2": "Log out", "0": "Exit"}
 
@@ -74,19 +73,42 @@ class Banking:
     def do_exit():
         return Status.exit, "Bye!"
 
+    @staticmethod
+    def calculate_checksum_number(card_number: str):
+        card_digits = [int(x) for x in card_number]
+        card_digits_after_step_1 = []
+        for i in range(len(card_digits)):
+            i += 1
+            if i % 2 == 1:
+                card_digits_after_step_1.append(2 * card_digits[i - 1])
+            else:
+                card_digits_after_step_1.append(card_digits[i - 1])
+        card_digits_after_step_2 = []
+        for each in card_digits_after_step_1:
+            if each > 9:
+                card_digits_after_step_2.append(each - 9)
+            else:
+                card_digits_after_step_2.append(each)
+        total = sum(card_digits_after_step_2)
+        return str(10 - total % 10)
+
     def create_card_number(self):
-        customer_account_number = random.randint(000000000, 999999999)
-        card_number = str(self.iin_number) + str(customer_account_number) + str(self.checksum_number)
+        customer_account_number = self.convert_number_to_needed_string_length(random.randint(0, 999999999), 9)
+        checksum_number = self.calculate_checksum_number(self.iin_number + customer_account_number)
+        card_number = self.iin_number + customer_account_number + checksum_number
         if self.accounts:
             for account in self.accounts:
                 if card_number == account.get_card_number():
                     return self.create_card_number()
         return card_number
 
+    def create_pin(self):
+        pin_number = random.randint(0, 9999)
+        return self.convert_number_to_needed_string_length(pin_number, 4)
+
     @staticmethod
-    def create_pin():
-        pin = str(random.randint(1000, 9999))
-        return pin
+    def convert_number_to_needed_string_length(number: int, length: int):
+        return (length - len(str(number))) * "0" + str(number)
 
     def create_account(self):
         card_number = self.create_card_number()
