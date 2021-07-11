@@ -13,6 +13,7 @@ class CLI(Input):
     def get_input_data(self):
         return input()
 
+
     @staticmethod
     def get_card_number():
         return input("\nEnter your card number:\n")
