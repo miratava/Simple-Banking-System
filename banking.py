@@ -3,7 +3,6 @@ import random
 from abc import ABC
 import sqlite3
 
-
 class Input(ABC):
     def get_input_data(self):
         pass
